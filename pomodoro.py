@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import sys, time, subprocess, argparse
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 LOG_DIR = Path.home() / ".pomodoro"
+BAR_WIDTH = 20
 
 
 def log_entry(line):
@@ -32,33 +33,32 @@ def notify(label, ring):
     '''], stdout=subprocess.DEVNULL)
 
 
-def run_timer(minutes, label, ring):
+def run_timer(minutes, label, ring, note):
     total = minutes * 60
     start = time.monotonic()
-
-    print(f"\t\t-----")
-    print(f"\t\t{label}")
-    print(f"\t\t-----", end="", flush=True)
-    print("\033[1A", end="")  # move cursor up onto the middle line
+    started_at = datetime.now().strftime("%H:%M")
+    suffix = f" - {note}" if note else ""
 
     try:
         while True:
-            elapsed = time.monotonic() - start
-            if elapsed >= total:
-                elapsed = total
+            elapsed = min(time.monotonic() - start, total)
             m, s = divmod(int(elapsed), 60)
-            print(f"\r\t\t{m:02d}:{s:02d} / {minutes:02d}:00\t\t", end="", flush=True)
+            filled = int(BAR_WIDTH * elapsed / total) if total else BAR_WIDTH
+            bar = "█" * filled + "░" * (BAR_WIDTH - filled)
+            print(f"\r  {label}  {bar}  {m:02d}:{s:02d} / {minutes:02d}:00 {suffix}",
+                  end="", flush=True)
             if elapsed >= total:
                 break
             time.sleep(0.2)
     except KeyboardInterrupt:
-        stopped_after = int((time.monotonic() - start) // 60)
-        log_entry(f"{label} {minutes}min (Stopped after {stopped_after}min)")
-        print("\nStopped.")
+        elapsed = time.monotonic() - start
+        m, s = divmod(int(elapsed), 60)
+        log_entry(f"{started_at} {label} {int(elapsed // 60)}/{minutes}min{suffix}")
+        print(f"\n  Stopped after {m:02d}:{s:02d}.")
         sys.exit(0)
 
-    print()
-    log_entry(f"{label} {minutes}min")
+    print(f"\n  Done!")
+    log_entry(f"{started_at} {label} {minutes}min{suffix}")
     notify(label, ring)
 
 
@@ -72,6 +72,8 @@ def main():
                         help="play a sound when the timer finishes")
     parser.add_argument("-s", "--show", action="store_true",
                         help="show the log of the day")
+    parser.add_argument("-n", "--note", metavar="TEXT",
+                        help="note to append to the log entry")
     args = parser.parse_args()
 
     if args.show:
@@ -83,12 +85,12 @@ def main():
         minutes = 5
         if args.minutes is not None:
             minutes = args.minutes
-        run_timer(minutes, "PAUSE", args.ring)
+        run_timer(minutes, "BREAK", args.ring, args.note)
     else:
         minutes = 25
         if args.minutes is not None:
             minutes = args.minutes
-        run_timer(minutes, "WORK", args.ring)
+        run_timer(minutes, "WORK", args.ring, args.note)
 
 
 if __name__ == "__main__":
