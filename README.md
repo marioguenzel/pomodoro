@@ -21,7 +21,7 @@ pomodoro -s           # show today's log
 
 Options can be combined, e.g. `pomodoro 50 -r -n "deep work"`.
 
-Stop a running timer at any time with `Ctrl+C` — the partial session is still logged.
+A running timer can be stopped at any time with `Ctrl+C`. The partial session is still logged.
 
 | Option | Description |
 |---|---|
@@ -55,8 +55,7 @@ grep "writing paper" ~/.pomodoro/*    # find all sessions for a project
 
 ## How it works
 
-- The timer is **timestamp-based**: it records the start time once and computes the elapsed time on every refresh, instead of counting down with `sleep(1)`. This keeps it accurate even over long sessions — sleep-based countdowns drift.
-- The display refreshes every 0.2 s on a single line, so `Ctrl+C` responds almost instantly.
+- The timer is **timestamp-based**: it records the start time once and computes the elapsed time on every refresh (every 0.2s).
 - When a timer finishes, a native macOS dialog pops up (via `osascript`); with `-r` it also plays the system "Glass" sound (via `afplay`).
 
 
