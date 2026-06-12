@@ -19,7 +19,7 @@ pomodoro -n "emails"  # attach a note to the session
 pomodoro -s           # show today's log
 ```
 
-Options can be combined, e.g. `pomodoro 50 -r -n "deep work"`.
+Options can be combined, e.g., `pomodoro 50 -r -n "deep work"`.
 
 A running timer can be stopped at any time with `Ctrl+C`. The partial session is still logged.
 
@@ -42,7 +42,7 @@ Every session is appended to a plain-text file per day at `~/.pomodoro/YYYY-MM-D
 09:48 WORK 16/25min - emails
 ```
 
-Each entry records the start time, the session type, the duration, and the optional note. Sessions stopped early with `Ctrl+C` are logged as `elapsed/planned` (e.g. `16/25min`), so completed and interrupted sessions are easy to tell apart.
+Each entry records the start time, the session type, the duration, and the optional note. Sessions stopped early with `Ctrl+C` are logged as `elapsed/planned` (e.g., `16/25min`), so completed and interrupted sessions are easy to tell apart.
 
 Since the logs are just text files, they play nicely with standard tools:
 
