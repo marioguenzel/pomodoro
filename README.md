@@ -61,7 +61,7 @@ grep "writing paper" ~/.pomodoro/*    # find all sessions for a project
 
 ## Installation
 
-Requires macOS and Python 3 (preinstalled on recent macOS). No packages to install.
+Requires macOS and Python 3 (tested with Python3.12). No packages to install.
 
 **Option 1 — shell alias (recommended):** keep the script wherever you like and add an alias to your `~/.zshrc`:
 
